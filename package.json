@@ -1,0 +1,10 @@
+{
+  "name": "KeepIt",
+  "version": "1.0.0",
+  "description": "Self-hosted note-taking webapp",
+  "main": "server.js",
+  "repository": "https://github.com/shreyansh-zazz/KeepIt.git",
+  "author": "Shreyansh Zazz <shreyansh@notesss.com>",
+  "license": "MIT",
+  "private": false
+}
