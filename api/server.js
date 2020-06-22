@@ -1,10 +1,10 @@
 import { ApolloServer } from 'apollo-server';
 
-import Authentication from './modules/authentication/authentication';
+import Modules from './modules/modules';
 
 const server = new ApolloServer({
-  typeDefs: Authentication.typeDefs,
-  resolvers: Authentication.resolvers,
+  typeDefs: Modules.typeDefs,
+  resolvers: Modules.resolvers,
 });
 
 server.listen().then(({
