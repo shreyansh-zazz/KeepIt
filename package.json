@@ -14,8 +14,10 @@
     "test": "echo NoTest"
   },
   "dependencies": {
+    "@graphql-modules/core": "^0.7.17",
     "apollo-server": "^2.15.0",
-    "graphql": "^15.1.0"
+    "graphql": "^15.1.0",
+    "graphql-tag": "^2.10.3"
   },
   "devDependencies": {
     "@babel/core": "^7.10.3",
@@ -31,6 +33,7 @@
     "eslint-plugin-react-hooks": "4.0.0",
     "nodemon-webpack-plugin": "^4.3.2",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-graphql-loader": "^1.0.2"
   }
 }
