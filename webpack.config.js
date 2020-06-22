@@ -1,16 +1,15 @@
-var webpack = require('webpack');
+// eslint-disable-next-line no-unused-vars
+const webpack = require('webpack');
 const NodemonPlugin = require('nodemon-webpack-plugin'); // Ding
 
-var path = require('path');
-var fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 
-var nodeModules = {};
+const nodeModules = {};
 fs.readdirSync('node_modules')
-  .filter(function(x) {
-    return ['.bin'].indexOf(x) === -1;
-  })
-  .forEach(function(mod) {
-    nodeModules[mod] = 'commonjs ' + mod;
+  .filter((x) => ['.bin'].indexOf(x) === -1)
+  .forEach((mod) => {
+    nodeModules[mod] = `commonjs ${mod}`;
   });
 
 module.exports = {
@@ -18,11 +17,12 @@ module.exports = {
   target: 'node',
   output: {
     path: path.join(__dirname, 'build'),
-    filename: 'server.js'
+    filename: 'server.js',
   },
   externals: nodeModules,
   module: {
     rules: [
+      { test: /\.graphql?$/, loader: 'webpack-graphql-loader' },
       {
         enforce: 'pre',
         test: /\.js$/,
@@ -32,7 +32,7 @@ module.exports = {
           fix: true,
           // default value
           formatter: 'stylish',
-        }
+        },
       },
       {
         test: /\.js$/,
@@ -44,4 +44,4 @@ module.exports = {
   plugins: [
     new NodemonPlugin(), // Dong
   ],
-}
+};
