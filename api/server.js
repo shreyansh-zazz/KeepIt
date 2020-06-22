@@ -1,39 +1,15 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServer } from 'apollo-server';
 
-const books = [{
-  title: 'Harry Potter and the Chamber of Secrets',
-  author: 'J.K. Rowling',
-},
-{
-  title: 'Jurassic Park',
-  author: 'Michael Crichton',
-},
-];
-
-const typeDefs = gql`
-  type Book {
-    title: String
-    author: String
-  }
-
-  type Query {
-    books: [Book]
-  }
-`;
-
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-};
+import Authentication from './modules/authentication/authentication';
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  typeDefs: Authentication.typeDefs,
+  resolvers: Authentication.resolvers,
 });
 
 server.listen().then(({
   url,
 }) => {
+  // eslint-disable-next-line no-console
   console.log(`🚀  Server ready at ${url}`);
 });

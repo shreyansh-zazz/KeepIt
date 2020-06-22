@@ -1,0 +1,7 @@
+type Query {
+  login: UserAuthentication
+}
+
+type UserAuthentication {
+  success: String
+}
