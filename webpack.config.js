@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const webpack = require('webpack');
-const NodemonPlugin = require('nodemon-webpack-plugin'); // Ding
+const NodemonPlugin = require('nodemon-webpack-plugin');
 
 const path = require('path');
 const fs = require('fs');
@@ -21,27 +21,38 @@ module.exports = {
   },
   externals: nodeModules,
   module: {
-    rules: [
-      { test: /\.graphql?$/, loader: 'webpack-graphql-loader' },
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader',
-        options: {
-          fix: true,
-          // default value
-          formatter: 'stylish',
-        },
+    rules: [{
+      test: /\.graphql?$/,
+      exclude: [
+        path.join(__dirname, 'build'),
+        path.join(__dirname, 'node_modules'),
+      ],
+      loader: 'webpack-graphql-loader',
+    },
+    {
+      enforce: 'pre',
+      test: /\.js$/,
+      exclude: [
+        path.join(__dirname, 'build'),
+        path.join(__dirname, 'node_modules'),
+      ],
+      loader: 'eslint-loader',
+      options: {
+        fix: true,
+        // eslint-disable-next-line global-require
+        formatter: require('eslint-friendly-formatter'),
       },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-      },
-    ],
+    },
+    {
+      test: /\.js$/,
+      exclude: [
+        path.join(__dirname, 'build'),
+        path.join(__dirname, 'node_modules'),
+      ],
+      loader: 'babel-loader',
+    }],
   },
   plugins: [
-    new NodemonPlugin(), // Dong
+    new NodemonPlugin(),
   ],
 };
