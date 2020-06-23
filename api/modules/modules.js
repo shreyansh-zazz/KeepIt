@@ -1,19 +1,19 @@
-import { GraphQLModule } from '@graphql-modules/core';
-import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge';
+import { GraphQLModule } from '@graphql-modules/core'
+import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge'
 
-import Authentication from './authentication/authentication';
+import Authentication from './authentication/authentication'
 
 const schemas = [
-  Authentication.typeDefs,
-];
+  Authentication.typeDefs
+]
 
 const resolvers = [
-  Authentication.resolvers,
-];
+  Authentication.resolvers
+]
 
 const modules = new GraphQLModule({
   typeDefs: mergeTypeDefs(schemas, { all: true }),
-  resolvers: mergeResolvers(resolvers),
-});
+  resolvers: mergeResolvers(resolvers)
+})
 
-export default modules;
+export default modules

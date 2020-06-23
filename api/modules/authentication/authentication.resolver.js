@@ -1,9 +1,9 @@
 const AuthenticationResolver = {
   Query: {
     login: () => ({
-      success: 'Success',
-    }),
-  },
-};
+      success: 'Success'
+    })
+  }
+}
 
-export default AuthenticationResolver;
+export default AuthenticationResolver

@@ -1,23 +1,23 @@
 // eslint-disable-next-line no-unused-vars
-const webpack = require('webpack');
-const NodemonPlugin = require('nodemon-webpack-plugin');
+const webpack = require('webpack')
+const NodemonPlugin = require('nodemon-webpack-plugin')
 
-const path = require('path');
-const fs = require('fs');
+const path = require('path')
+const fs = require('fs')
 
-const nodeModules = {};
+const nodeModules = {}
 fs.readdirSync('node_modules')
   .filter((x) => ['.bin'].indexOf(x) === -1)
   .forEach((mod) => {
-    nodeModules[mod] = `commonjs ${mod}`;
-  });
+    nodeModules[mod] = `commonjs ${mod}`
+  })
 
 module.exports = {
   entry: './api/server.js',
   target: 'node',
   output: {
     path: path.join(__dirname, 'build'),
-    filename: 'server.js',
+    filename: 'server.js'
   },
   externals: nodeModules,
   module: {
@@ -25,37 +25,37 @@ module.exports = {
       test: /\.graphql?$/,
       exclude: [
         path.join(__dirname, 'build'),
-        path.join(__dirname, 'node_modules'),
+        path.join(__dirname, 'node_modules')
       ],
-      loader: 'webpack-graphql-loader',
+      loader: 'webpack-graphql-loader'
     },
     {
       enforce: 'pre',
       test: /\.js$/,
       exclude: [
         path.join(__dirname, 'build'),
-        path.join(__dirname, 'node_modules'),
+        path.join(__dirname, 'node_modules')
       ],
       loader: 'eslint-loader',
       options: {
         sourceMap: true,
         fix: true,
         // eslint-disable-next-line global-require
-        formatter: require('eslint-friendly-formatter'),
-      },
+        formatter: require('eslint-friendly-formatter')
+      }
     },
     {
       test: /\.js$/,
       exclude: [
         path.join(__dirname, 'build'),
-        path.join(__dirname, 'node_modules'),
+        path.join(__dirname, 'node_modules')
       ],
       loader: 'babel-loader',
-      options: { sourceMap: true },
-    }],
+      options: { sourceMap: true }
+    }]
   },
   plugins: [
-    new NodemonPlugin(),
+    new NodemonPlugin()
   ],
-  devtool: 'source-map',
-};
+  devtool: 'source-map'
+}
