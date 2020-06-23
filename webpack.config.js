@@ -38,6 +38,7 @@ module.exports = {
       ],
       loader: 'eslint-loader',
       options: {
+        sourceMap: true,
         fix: true,
         // eslint-disable-next-line global-require
         formatter: require('eslint-friendly-formatter'),
@@ -50,9 +51,11 @@ module.exports = {
         path.join(__dirname, 'node_modules'),
       ],
       loader: 'babel-loader',
+      options: { sourceMap: true },
     }],
   },
   plugins: [
     new NodemonPlugin(),
   ],
+  devtool: 'source-map',
 };
