@@ -8,10 +8,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "nodemon --exec babel-node ./api/server.js",
+    "start": "nodemon --exec babel-node api/server.js",
     "build": "babel api -d build",
     "serve": "npm run build && node ./build/server.js",
     "test": "npm run eslint && echo NoTest",
+    "debug": "nodemon --exec babel-node --inspect=0.0.0.0 api/server.js",
     "eslint": "eslint **/*.js --fix"
   },
   "dependencies": {
