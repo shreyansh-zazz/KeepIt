@@ -8,10 +8,10 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "webpack --watch --mode=development",
-    "build": "webpack --mode=production",
-    "serve": "node ./build/server.js",
-    "test": "echo NoTest",
+    "start": "nodemon --exec babel-node ./api/server.js",
+    "build": "babel api -d build",
+    "serve": "npm run build && node ./build/server.js",
+    "test": "npm run eslint && echo NoTest",
     "eslint": "eslint **/*.js --fix"
   },
   "dependencies": {
@@ -23,21 +23,17 @@
     "mongoose": "^5.9.20"
   },
   "devDependencies": {
+    "@babel/cli": "^7.10.3",
     "@babel/core": "^7.10.3",
+    "@babel/node": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
-    "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.1.0",
+    "babel-plugin-import-graphql": "^2.7.0",
     "eslint": "^7.3.1",
-    "eslint-config-standard": "14.1.1",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-loader": "^4.0.2",
+    "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "nodemon-webpack-plugin": "^4.3.2",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12",
-    "webpack-graphql-loader": "^1.0.2"
+    "nodemon": "^2.0.4"
   }
 }
