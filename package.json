@@ -11,9 +11,10 @@
     "start": "nodemon --exec babel-node api/server.js",
     "build": "babel api -d build",
     "serve": "npm run build && node ./build/server.js",
-    "test": "npm run eslint && echo NoTest",
+    "test": "npm run lint-check && echo NoTest",
     "debug": "nodemon --exec babel-node --inspect=0.0.0.0 api/server.js",
-    "eslint": "eslint **/*.js --fix"
+    "lint-check": "eslint **/*.js",
+    "lint": "eslint **/*.js --fix"
   },
   "dependencies": {
     "@graphql-modules/core": "^0.7.17",
