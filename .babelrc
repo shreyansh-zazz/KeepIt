@@ -1,0 +1,10 @@
+{
+  "presets": ["@babel/preset-env"],
+  "ignore": [
+    "build"
+  ],
+  "plugins": [
+    "import-graphql"
+  ],
+  "sourceMaps": "inline"
+}
