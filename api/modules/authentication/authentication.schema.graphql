@@ -2,6 +2,23 @@ type Query {
   login: UserAuthentication
 }
 
+type Mutation {
+  register(first_name: String!, last_name: String!, primary_email: String!): AddUserMutationResponse
+}
+
+type AddUserMutationResponse implements MutationResponse {
+  code: String!
+  success: Boolean!
+  message: String!
+  user: User
+}
+
+type User {
+  first_name: String!
+  last_name: String!
+  primary_email: String!
+}
+
 type UserAuthentication {
   success: String
 }
