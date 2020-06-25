@@ -13,8 +13,8 @@
     "serve": "npm run build && node ./build/server.js",
     "test": "npm run lint-check && echo NoTest",
     "debug": "nodemon --exec babel-node --inspect=0.0.0.0 api/server.js",
-    "lint-check": "eslint **/*.js",
-    "lint": "eslint **/*.js --fix"
+    "lint-check": "eslint api/**/*.js",
+    "lint": "eslint api/**/*.js --fix"
   },
   "dependencies": {
     "@graphql-modules/core": "^0.7.17",
