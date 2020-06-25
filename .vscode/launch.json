@@ -13,7 +13,7 @@
       "restart": true,
       "sourceMaps": true,
       "smartStep": true,
-      "protocol": "inspector",
+      "protocol": "inspector"
     }
   ]
 }
