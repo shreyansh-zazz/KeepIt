@@ -2,7 +2,7 @@
 
 In this chaotic world, we try to keep things simple and minimal as much as possible. Keeping that in mind we have the following minimal guidelines to be followed while contributing to KeepIt.
 
-## Basic Rules:
+## Basic Rules
 - You cannot directly commit to master or rel-* branches, instead, create a pull request (pr), make sure all ci checks pass, add reviewers, and after review merge.
 - We squash commits while merging the pull requests, so at least the final commit message should follow the commit guidelines.
 
