@@ -1,0 +1,10 @@
+{
+  "verbose": true,
+  "watch": [
+    "api/"
+  ],
+  "ext": "js,json,graphql",
+  "env": {
+    "BABEL_DISABLE_CACHE": 1
+}
+}
