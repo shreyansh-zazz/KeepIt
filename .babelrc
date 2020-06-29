@@ -6,5 +6,5 @@
   "plugins": [
     "import-graphql"
   ],
-  "sourceMaps": "inline"
+  "sourceMaps": "both"
 }
