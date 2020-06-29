@@ -1,9 +1,20 @@
 type Query {
-  login: UserAuthentication
+  login: String
+  validateEmail(primaryEmail: String!): ValidationResponse
+  validateUsername(username: String!): ValidationResponse
 }
 
 type Mutation {
-  register(first_name: String!, last_name: String!, primary_email: String!): AddUserMutationResponse
+  register(input: AddUserMutation): AddUserMutationResponse
+}
+
+input AddUserMutation {
+  first_name: String!
+  last_name: String!
+  primary_email: String!
+  username: String!
+  password: String!
+  confirm_password: String!
 }
 
 type AddUserMutationResponse implements MutationResponse {
@@ -11,14 +22,19 @@ type AddUserMutationResponse implements MutationResponse {
   success: Boolean!
   message: String!
   user: User
+  jwt: String
+}
+
+type ValidationResponse {
+  isValid: Boolean
 }
 
 type User {
-  first_name: String!
-  last_name: String!
-  primary_email: String!
-}
-
-type UserAuthentication {
-  success: String
+  first_name: String
+  last_name: String
+  primary_email: String
+  username: String
+  role: String
+  isActive: Boolean
+  isVerified: Boolean
 }

@@ -1,33 +1,108 @@
+import _ from 'lodash'
+import bcrypt from 'bcrypt'
+
+import HandleError from '../../helpers/error-handler/error-handler'
 import UserModel from '../../models/user.model'
+
+const saltRounds = 10
 
 const AuthenticationResolver = {
   Query: {
     login: () => ({
       success: 'Success'
-    })
+    }),
+
+    validateEmail: async (parent, { primaryEmail }, ctx) => {
+      const emailValidation = await validateEmail(primaryEmail)
+      return {
+        isValid: emailValidation.isValid
+      }
+    },
+
+    validateUsername: async (parent, { username }, ctx) => {
+      const usernameValidation = await validateUsername(username)
+      return {
+        isValid: usernameValidation.isValid
+      }
+    }
   },
 
   Mutation: {
-    register: (parent, data, ctx) => {
-      const user = new UserModel(data)
-
-      var error = user.validateSync()
+    register: async (parent, { input }, ctx) => {
+      const user = new UserModel(input)
+      const error = user.validateSync()
       if (error) {
-        throw error
+        return HandleError('UserInputError', error)
       }
+
+      const emailValidation = await validateEmail(input.primary_email)
+      if (!emailValidation.isValid) {
+        return emailValidation.error
+      }
+
+      const usernameValidation = await validateUsername(input.username)
+      if (!usernameValidation.isValid) {
+        return usernameValidation.error
+      }
+
+      if (input.password !== input.confirm_password) {
+        return HandleError('IncorrectConfirmPassword')
+      }
+
+      const hashedPassword = await bcrypt.hash(input.password, saltRounds)
+        .then((hash) => {
+          if (!hash) {
+            return HandleError('UnexpectedError')
+          }
+          return hash
+        })
+      user.password = hashedPassword
+
+      const returnResponse = await user.save()
+        .then((res) => {
+          return res
+        })
 
       return {
         code: 201,
         success: true,
-        message: 'User added succefully',
-        user: {
-          first_name: 'asdsad',
-          last_name: 'adda',
-          primary_email: 'asdasd'
-        }
+        message: 'Registration successful',
+        user: _.pick(returnResponse, ['first_name', 'last_name', 'primary_email', 'username', 'role', 'isActive', 'isVerified'])
       }
     }
   }
+}
+
+async function validateEmail (email) {
+  const isDuplicateEmailExists = await UserModel
+    .findOne({ primary_email: email })
+    .then((res) => {
+      if (res && res.id) {
+        return true
+      }
+      return false
+    })
+
+  if (isDuplicateEmailExists) {
+    return { isValid: false, error: HandleError('DuplicateUserError', { key: 'Email Address' }) }
+  }
+  return { isValid: true, error: {} }
+}
+
+async function validateUsername (username) {
+  const isDuplicateUsernameExists = await UserModel
+    .findOne({ username: username })
+    .then((res) => {
+      if (res && res.id) {
+        return true
+      }
+      return false
+    })
+
+  if (isDuplicateUsernameExists) {
+    return { isValid: false, error: HandleError('DuplicateUserError', { key: 'Username' }) }
+  }
+  return { isValid: true, error: {} }
 }
 
 export default AuthenticationResolver
