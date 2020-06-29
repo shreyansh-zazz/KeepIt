@@ -14,7 +14,43 @@ const userSchema = new mongoose.Schema({
   primary_email: {
     type: 'String',
     // eslint-disable-next-line no-useless-escape
-    match: [new RegExp(/[a-z0-9\._%+!$&*=^|~#%{}/\-]+@([a-z0-9\-]+\.){1,}([a-z]{2,22})/), 'Invalid Email ID']
+    match: [new RegExp(/[a-z0-9\._%+!$&*=^|~#%{}/\-]+@([a-z0-9\-]+\.){1,}([a-z]{2,22})/), 'Invalid Email ID'],
+    index: true,
+    unique: true
+  },
+
+  username: {
+    type: 'String',
+    match: [new RegExp(/^[a-z0-9_-]{3,26}$/), 'Invalid Username! Allowed characters are: a-z, 0-9, - and _. Minimum length should be 3 and maximum length should be 26 character.'],
+    index: true,
+    unique: true
+  },
+
+  role: {
+    type: 'String',
+    default: 'MEMBER',
+    enum: ['MEMBER']
+  },
+
+  isActive: {
+    type: 'bool',
+    default: true
+  },
+
+  isVerified: {
+    type: 'Boolean',
+    default: false
+  },
+
+  createdOn: {
+    type: 'Date',
+    default: new Date().toJSON(),
+    immutable: true
+  },
+
+  lastUpdatedOn: {
+    type: 'Date',
+    default: new Date().toJSON()
   }
 })
 
