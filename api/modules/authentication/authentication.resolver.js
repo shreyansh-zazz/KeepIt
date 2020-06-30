@@ -13,14 +13,14 @@ const AuthenticationResolver = {
     }),
 
     validateEmail: async (parent, { primaryEmail }, ctx) => {
-      const emailValidation = await validateEmail(primaryEmail)
+      const emailValidation = await validateEmailForDuplication(primaryEmail)
       return {
         isValid: emailValidation.isValid
       }
     },
 
     validateUsername: async (parent, { username }, ctx) => {
-      const usernameValidation = await validateUsername(username)
+      const usernameValidation = await validateUsernameForDuplication(username)
       return {
         isValid: usernameValidation.isValid
       }
@@ -35,12 +35,12 @@ const AuthenticationResolver = {
         return HandleError('UserInputError', error)
       }
 
-      const emailValidation = await validateEmail(input.primary_email)
+      const emailValidation = await validateEmailForDuplication(input.primary_email)
       if (!emailValidation.isValid) {
         return emailValidation.error
       }
 
-      const usernameValidation = await validateUsername(input.username)
+      const usernameValidation = await validateUsernameForDuplication(input.username)
       if (!usernameValidation.isValid) {
         return usernameValidation.error
       }
@@ -73,7 +73,7 @@ const AuthenticationResolver = {
   }
 }
 
-async function validateEmail (email) {
+async function validateEmailForDuplication (email) {
   const isDuplicateEmailExists = await UserModel
     .findOne({ primary_email: email })
     .then((res) => {
@@ -89,7 +89,8 @@ async function validateEmail (email) {
   return { isValid: true, error: {} }
 }
 
-async function validateUsername (username) {
+async function validateUsernameForDuplication (username) {
+  testing('asd')
   const isDuplicateUsernameExists = await UserModel
     .findOne({ username: username })
     .then((res) => {
@@ -103,6 +104,12 @@ async function validateUsername (username) {
     return { isValid: false, error: HandleError('DuplicateUserError', { key: 'Username' }) }
   }
   return { isValid: true, error: {} }
+}
+
+function testing (para) {
+  if (para) {
+    return true
+  }
 }
 
 export default AuthenticationResolver
