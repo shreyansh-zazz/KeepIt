@@ -82,6 +82,9 @@ async function validateEmailForDuplication (email) {
       }
       return false
     })
+    .catch(err => {
+      return err
+    })
 
   if (isDuplicateEmailExists) {
     return { isValid: false, error: HandleError('DuplicateUserError', { key: 'Email Address' }) }
@@ -90,7 +93,6 @@ async function validateEmailForDuplication (email) {
 }
 
 async function validateUsernameForDuplication (username) {
-  testing('asd')
   const isDuplicateUsernameExists = await UserModel
     .findOne({ username: username })
     .then((res) => {
@@ -104,12 +106,6 @@ async function validateUsernameForDuplication (username) {
     return { isValid: false, error: HandleError('DuplicateUserError', { key: 'Username' }) }
   }
   return { isValid: true, error: {} }
-}
-
-function testing (para) {
-  if (para) {
-    return true
-  }
 }
 
 export default AuthenticationResolver

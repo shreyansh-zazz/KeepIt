@@ -2,10 +2,14 @@ module.exports = {
   env: {
     browser: true,
     es2020: true,
-    node: true
+    node: true,
+    jest: true
   },
+  plugins: ['jest'],
   extends: [
-    'standard'
+    'standard',
+    'plugin:jest/recommended',
+    'plugin:jest/style'
   ],
   parserOptions: {
     ecmaVersion: 11,
