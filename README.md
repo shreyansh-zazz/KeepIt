@@ -21,4 +21,3 @@ url:chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=tr
 - [Quilljs](https://quilljs.com/)
 - [Editor.js](https://editorjs.io/)
 - [ckeditor5](https://github.com/ckeditor/ckeditor5)
-- 
