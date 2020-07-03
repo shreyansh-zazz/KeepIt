@@ -3,8 +3,9 @@
 import Hapi from '@hapi/hapi'
 import { ApolloServer } from 'apollo-server-hapi'
 
-import Modules from './modules/modules'
+import setConfigurations from './config/env'
 import DB from './config/database'
+import Modules from './modules/modules'
 
 async function StartServer () {
   const server = new ApolloServer({
@@ -36,7 +37,9 @@ async function StartServer () {
     }
   })
 
-  await app.start()
+  await app.start().then(data => {
+    setConfigurations()
+  })
 }
 
 process.on('unhandledRejection', (err) => {

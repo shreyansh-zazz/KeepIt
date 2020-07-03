@@ -1,4 +1,6 @@
-const mongoose = require('mongoose')
+import setConfigurations from '../env'
+import mongoose from 'mongoose'
+
 mongoose.set('useCreateIndex', true)
 mongoose.promise = global.Promise
 
@@ -25,7 +27,7 @@ async function dropAllCollections () {
 }
 
 module.exports = {
-  setupDB (databaseName) {
+  setupTestConfigs (moduleName) {
     // Connect to Mongoose
     beforeAll(async () => {
       await mongoose.connect(global.__MONGO_URI__, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
@@ -33,8 +35,10 @@ module.exports = {
           console.error(err)
           process.exit(1)
         }
-        console.log(`Database connect successfully: ${databaseName}`)
+        console.log(`Database connect successfully for module: ${moduleName}`)
       })
+
+      setConfigurations()
     })
 
     // Cleans up database between each test
