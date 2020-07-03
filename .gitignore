@@ -3,6 +3,8 @@ dist
 build
 coverage
 
+.env
+
 yarn-error.log
 
 sh.exe.stackdump

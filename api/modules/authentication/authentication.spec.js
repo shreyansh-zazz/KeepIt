@@ -1,4 +1,4 @@
-import { setupDB } from '../../config/test-config/database'
+import { setupTestConfigs } from '../../config/test-config/test-setup'
 import HandleError from '../../helpers/error-handler/error-handler'
 import AuthenticationResolver from './authentication.resolver'
 import UserModel from '../../models/user.model'
@@ -16,7 +16,7 @@ const jestUserData = {
 }
 
 describe('authentication module', () => {
-  setupDB('authentication')
+  setupTestConfigs('authentication')
 
   describe('validation methods tests', () => {
     it('should validate email to true', async () => {
