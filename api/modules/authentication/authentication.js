@@ -4,7 +4,8 @@ import resolvers from './authentication.resolver'
 
 const Authentication = new GraphQLModule({
   typeDefs,
-  resolvers
+  resolvers,
+  context: req => req
 })
 
 export default Authentication

@@ -19,7 +19,7 @@ mongoose.connect(databaseURL, {
     console.log('Database connected')
   })
   .catch((err) => {
-    throw err
+    console.log(err)
   })
 
 export default mongoose.connection
