@@ -9,12 +9,13 @@
   "private": false,
   "scripts": {
     "start": "npm run build && env NODE_ENV=production node ./build/server.js",
-    "develop": "env NODE_ENV=development nodemon --exec babel-node api/server.js",
     "build": "env NODE_ENV=production babel api -d build",
+    "develop": "env NODE_ENV=development nodemon --exec babel-node api/server.js",
+    "develop:debug": "env NODE_ENV=development nodemon --exec babel-node --inspect=0.0.0.0 api/server.js",
     "test": "npm run lint-check && env NODE_ENV=test jest",
-    "debug": "env NODE_ENV=development nodemon --exec babel-node --inspect=0.0.0.0 api/server.js",
     "lint-check": "eslint api/**/*.js",
-    "lint": "eslint api/**/*.js --fix"
+    "lint": "eslint api/**/*.js --fix",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "@babel/runtime": "^7.10.4",
