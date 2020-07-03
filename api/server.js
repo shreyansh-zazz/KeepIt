@@ -28,7 +28,20 @@ async function StartServer () {
 
   await DB.on('error', console.error.bind(console, 'connection error:'))
 
+  app.route({
+    method: 'GET',
+    path: '/',
+    handler: (request, h) => {
+      return 'success'
+    }
+  })
+
   await app.start()
 }
+
+process.on('unhandledRejection', (err) => {
+  console.log(err)
+  process.exit(1)
+})
 
 StartServer().catch(error => console.log(error))

@@ -76,7 +76,7 @@ describe('authentication module', () => {
       AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
 
       const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
-      expect(res.success).toBeTruthy()
+      expect(res.user.primary_email).toBeTruthy()
     })
 
     it('should throw error when confirm_password doesn\'t match', async () => {
