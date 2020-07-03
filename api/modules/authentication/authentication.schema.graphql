@@ -5,7 +5,7 @@ type Query {
 }
 
 type Mutation {
-  register(input: AddUserMutation): AddUserMutationResponse
+  register(input: AddUserMutation): AuthenticationResponse
 }
 
 input AddUserMutation {
@@ -17,16 +17,13 @@ input AddUserMutation {
   confirm_password: String!
 }
 
-type AddUserMutationResponse implements MutationResponse {
-  code: String!
-  success: Boolean!
-  message: String!
-  user: User
-  jwt: String
+type AuthenticationResponse {
+  user: User!
+  jwt: String!
 }
 
 type ValidationResponse {
-  isValid: Boolean
+  isValid: Boolean!
 }
 
 type User {

@@ -14,6 +14,7 @@ const AuthenticationResolver = {
 
     validateEmail: async (parent, { primaryEmail }, ctx) => {
       const emailValidation = await validateEmailForDuplication(primaryEmail)
+
       return {
         isValid: emailValidation.isValid
       }
@@ -64,9 +65,6 @@ const AuthenticationResolver = {
         })
 
       return {
-        code: 201,
-        success: true,
-        message: 'Registration successful',
         user: _.pick(returnResponse, ['first_name', 'last_name', 'primary_email', 'username', 'role', 'isActive', 'isVerified'])
       }
     }
