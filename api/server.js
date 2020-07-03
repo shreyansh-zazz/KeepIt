@@ -41,7 +41,10 @@ async function StartServer () {
 
 process.on('unhandledRejection', (err) => {
   console.log(err)
-  process.exit(1)
+
+  if (process.env.NODE_ENV !== 'test') {
+    process.exit(1)
+  }
 })
 
 StartServer().catch(error => console.log(error))
