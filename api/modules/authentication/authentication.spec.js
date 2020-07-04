@@ -75,7 +75,9 @@ describe('authentication module', () => {
       AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
       AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
 
-      const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
+      const ctx = { h: { state: jest.fn() } }
+      const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, ctx)
+
       expect(res.user.primary_email).toBeTruthy()
     })
 
