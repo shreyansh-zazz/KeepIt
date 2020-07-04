@@ -1,25 +1,32 @@
 import mongoose from 'mongoose'
 
-const databaseHost = process.env.DATABASE_HOST || '127.0.0.1'
-const databseSRV = process.env.DATABASE_SRV ? '+srv' : ''
-const databasePort = process.env.DATABASE_PORT || 27017
-const databaseName = process.env.DATABASE_NAME || 'keepit'
-const databaseAuth = process.env.DATABASE_USERNAME ? process.env.DATABASE_USERNAME.concat([':', process.env.DATABASE_PASSWORD, '@']) : ''
-const databaseConnectionAuth = process.env.AUTHENTICATION_DATABASE || 'admin'
-const databaseSSL = process.env.DATABASE_SSL || false
+import ENV from './env'
 
-const databaseURL = `mongodb${databseSRV}://${databaseAuth}${databaseHost}:${databasePort}/${databaseName}?authSource=${databaseConnectionAuth}`
-
-mongoose.connect(databaseURL, {
-  useNewUrlParser: true,
-  ssl: databaseSSL
-})
-  .then(() => {
-    // eslint-disable-next-line no-console
-    console.log('Database connected')
+if (!ENV.IS_TEST) {
+  mongoose.connect(ENV.DATABASE_URL, {
+    useNewUrlParser: true,
+    ssl: ENV.DATABASE_SSL
   })
-  .catch((err) => {
-    console.log(err)
+    .then(() => {
+      // eslint-disable-next-line no-console
+      console.log('Database connected')
+    })
+    .catch((err) => {
+      throw err
+    })
+} else {
+  mongoose.connect(global.__MONGO_URI__, {
+    useNewUrlParser: true,
+    useCreateIndex: true
   })
+    .then(() => {
+      console.log('Database Connected')
+    })
+    .catch(err => {
+      throw err
+    })
+}
 
-export default mongoose.connection
+export default {
+  DB: mongoose.connection
+}
