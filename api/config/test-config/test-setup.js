@@ -1,4 +1,4 @@
-import setConfigurations from '../env'
+import config from '../config'
 import mongoose from 'mongoose'
 
 mongoose.set('useCreateIndex', true)
@@ -30,15 +30,9 @@ module.exports = {
   setupTestConfigs (moduleName) {
     // Connect to Mongoose
     beforeAll(async () => {
-      await mongoose.connect(global.__MONGO_URI__, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-        if (err) {
-          console.error(err)
-          process.exit(1)
-        }
-        console.log(`Database connect successfully for module: ${moduleName}`)
-      })
-
-      setConfigurations()
+      if (!config) {
+        throw new Error('Configuration settings failed. Try again.')
+      }
     })
 
     // Cleans up database between each test

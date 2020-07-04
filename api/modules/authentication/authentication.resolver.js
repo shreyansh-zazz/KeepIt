@@ -2,7 +2,7 @@ import _ from 'lodash'
 import bcrypt from 'bcrypt'
 
 import HandleError from '../../helpers/error-handler/error-handler'
-import { getJWT } from '../../helpers/encrypt-decrypt/jwt'
+import jwtHelper from '../../helpers/encrypt-decrypt/jwt'
 import UserModel from '../../models/user.model'
 
 const saltRounds = 10
@@ -66,7 +66,7 @@ const AuthenticationResolver = {
         })
 
       if (returnResponse.primary_email) {
-        returnResponse.jwt = getJWT(
+        returnResponse.jwt = jwtHelper.getJWT(
           _.pick(returnResponse, ['primary_email', 'username', 'role', 'isActive', 'isVerified'])
         )
       }

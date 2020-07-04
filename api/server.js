@@ -2,9 +2,9 @@
 
 import Hapi from '@hapi/hapi'
 import { ApolloServer } from 'apollo-server-hapi'
+import mongoose from 'mongoose'
 
-import setConfigurations from './config/env'
-import DB from './config/database'
+import config from './config/config'
 import Modules from './modules/modules'
 
 async function StartServer () {
@@ -25,9 +25,9 @@ async function StartServer () {
     app
   })
 
-  await server.installSubscriptionHandlers(app.listener)
+  server.installSubscriptionHandlers(app.listener)
 
-  await DB.on('error', console.error.bind(console, 'connection error:'))
+  mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
 
   app.route({
     method: 'GET',
@@ -38,7 +38,9 @@ async function StartServer () {
   })
 
   await app.start().then(data => {
-    setConfigurations()
+    if (!config) {
+      throw new Error('Configuration settings failed. Please restart the server.')
+    }
   })
 }
 
