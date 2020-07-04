@@ -1,0 +1,13 @@
+{
+	"recommendations": [
+		"waderyan.nodejs-extension-pack",
+		"jmsv.JavaScriptSnippetsStandard",
+		"mgmcdermott.vscode-language-babel",
+		"mikestead.dotenv",
+		"Prisma.vscode-graphql",
+		"Orta.vscode-jest"
+	],
+	"unwantedRecommendations": [
+		
+	]
+}
