@@ -75,8 +75,20 @@ describe('authentication module', () => {
       AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
       AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
 
-      const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
+      const ctx = { h: { state: jest.fn() } }
+      const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, ctx)
+
       expect(res.user.primary_email).toBeTruthy()
+    })
+
+    it('should throw unxpected error and delete user if saved', async () => {
+      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+
+      const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
+      const user = await UserModel.find({ primary_email: jestUserData.primary_email })
+      expect(res.extensions.code).toMatch(/INTERNAL_SERVER_ERROR/)
+      expect(user.length).toBeFalsy()
     })
 
     it('should throw error when confirm_password doesn\'t match', async () => {

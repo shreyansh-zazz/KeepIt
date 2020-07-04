@@ -4,6 +4,7 @@ import Hapi from '@hapi/hapi'
 import { ApolloServer } from 'apollo-server-hapi'
 import mongoose from 'mongoose'
 
+import states from './helpers/state-handler/cookie'
 import config from './config/config'
 import Modules from './modules/modules'
 
@@ -35,6 +36,10 @@ async function StartServer () {
     handler: (request, h) => {
       return 'success'
     }
+  })
+
+  states.forEach(state => {
+    app.state(state.name, state.options)
   })
 
   await app.start().then(data => {

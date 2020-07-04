@@ -24,7 +24,26 @@ const getJWT = async (payload) => {
   return token
 }
 
+const getRefreshJWT = async (payload) => {
+  const key = JWK.asKey({
+    kty: 'oct',
+    k: config.JWT_REFRESH_SECRET_KEY
+  })
+
+  const token = JWT.sign(payload, key, {
+    audience: ['urn:example:client'],
+    issuer: 'https://op.example.com',
+    expiresIn: '30 days',
+    header: {
+      typ: 'JWTRefresh'
+    }
+  })
+
+  return token
+}
+
 export default {
   getASecretKey: getASecretKey,
-  getJWT: getJWT
+  getJWT: getJWT,
+  getRefreshJWT: getRefreshJWT
 }

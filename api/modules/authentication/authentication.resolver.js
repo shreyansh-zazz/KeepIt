@@ -15,7 +15,6 @@ const AuthenticationResolver = {
 
     validateEmail: async (parent, { primaryEmail }, ctx) => {
       const emailValidation = await validateEmailForDuplication(primaryEmail)
-
       return {
         isValid: emailValidation.isValid
       }
@@ -32,48 +31,62 @@ const AuthenticationResolver = {
   Mutation: {
     register: async (parent, { input }, ctx) => {
       const user = new UserModel(input)
-      const error = user.validateSync()
-      if (error) {
-        return HandleError('UserInputError', error)
-      }
 
-      const emailValidation = await validateEmailForDuplication(input.primary_email)
-      if (!emailValidation.isValid) {
-        return emailValidation.error
-      }
+      try {
+        const error = user.validateSync()
+        if (error) {
+          return HandleError('UserInputError', error)
+        }
 
-      const usernameValidation = await validateUsernameForDuplication(input.username)
-      if (!usernameValidation.isValid) {
-        return usernameValidation.error
-      }
+        const emailValidation = await validateEmailForDuplication(input.primary_email)
+        if (!emailValidation.isValid) {
+          return emailValidation.error
+        }
 
-      if (input.password !== input.confirm_password) {
-        return HandleError('IncorrectConfirmPassword')
-      }
+        const usernameValidation = await validateUsernameForDuplication(input.username)
+        if (!usernameValidation.isValid) {
+          return usernameValidation.error
+        }
 
-      const hashedPassword = await bcrypt.hash(input.password, saltRounds)
-        .then((hash) => {
-          if (!hash) {
-            return HandleError('UnexpectedError')
+        if (input.password !== input.confirm_password) {
+          return HandleError('IncorrectConfirmPassword')
+        }
+
+        const hashedPassword = await bcrypt.hash(input.password, saltRounds)
+          .then((hash) => {
+            if (!hash) {
+              return HandleError('UnexpectedError')
+            }
+            return hash
+          })
+        user.password = hashedPassword
+
+        const returnResponse = await user.save()
+          .then((res) => {
+            return res
+          })
+
+        if (returnResponse.primary_email) {
+          returnResponse.jwt = jwtHelper.getJWT(
+            _.pick(returnResponse, ['primary_email', 'username', 'role', 'isActive', 'isVerified'])
+          )
+        }
+
+        ctx.h.state('session', {
+          refreshToken: await jwtHelper.getRefreshJWT(_.pick(returnResponse, ['primary_email', 'username', 'role', 'isActive', 'isVerified']))
+        })
+
+        return {
+          user: _.pick(returnResponse, ['first_name', 'last_name', 'primary_email', 'username', 'role', 'isActive', 'isVerified']),
+          jwt: returnResponse.jwt
+        }
+      } catch (err) {
+        UserModel.deleteOne({ primary_email: input.primary_email }, (err) => {
+          if (err) {
+            console.log(err)
           }
-          return hash
         })
-      user.password = hashedPassword
-
-      const returnResponse = await user.save()
-        .then((res) => {
-          return res
-        })
-
-      if (returnResponse.primary_email) {
-        returnResponse.jwt = jwtHelper.getJWT(
-          _.pick(returnResponse, ['primary_email', 'username', 'role', 'isActive', 'isVerified'])
-        )
-      }
-
-      return {
-        user: _.pick(returnResponse, ['first_name', 'last_name', 'primary_email', 'username', 'role', 'isActive', 'isVerified']),
-        jwt: returnResponse.jwt
+        return HandleError('UnexpectedError')
       }
     }
   }
