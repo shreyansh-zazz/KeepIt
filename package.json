@@ -22,6 +22,7 @@
     "@graphql-modules/core": "^0.7.17",
     "@graphql-tools/merge": "^6.0.10",
     "@hapi/hapi": "^19.1.1",
+    "@hapi/joi": "^17.1.1",
     "apollo-server": "^2.15.1",
     "apollo-server-hapi": "^2.15.1",
     "bcrypt": "^5.0.0",

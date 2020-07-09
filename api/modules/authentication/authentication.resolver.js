@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import bcrypt from 'bcrypt'
+import Joi from '@hapi/joi'
 
 import HandleError from '../../helpers/error-handler/error-handler'
 import jwtHelper from '../../helpers/encrypt-decrypt/jwt'
@@ -9,19 +10,25 @@ const saltRounds = 10
 
 const AuthenticationResolver = {
   Query: {
-    login: () => ({
-      success: 'Success'
-    }),
+    validateEmail: async (parent, input, ctx) => {
+      const isValidEmail = await Joi.string().email().validate(input.primary_email)
+      if (isValidEmail.error) {
+        return HandleError('UserInputError')
+      }
 
-    validateEmail: async (parent, { primaryEmail }, ctx) => {
-      const emailValidation = await validateEmailForDuplication(primaryEmail)
+      const userValidation = await isDuplicateEmail(input.primary_email)
       return {
-        isValid: emailValidation.isValid
+        isValid: userValidation.isValid
       }
     },
 
     validateUsername: async (parent, { username }, ctx) => {
-      const usernameValidation = await validateUsernameForDuplication(username)
+      const isValidUsername = await Joi.string().regex(/^[a-z0-9_-]{3,26}$/).validate(username)
+      if (isValidUsername.error) {
+        return HandleError('UserInputError')
+      }
+
+      const usernameValidation = await isDuplicateUsername(username)
       return {
         isValid: usernameValidation.isValid
       }
@@ -29,6 +36,17 @@ const AuthenticationResolver = {
   },
 
   Mutation: {
+    login: async (parent, { input }, ctx) => {
+      const isValidUsername = Joi.string().email().validate(input.username).error ? !Joi.string().regex(/^[a-z0-9_-]{3,26}$/).validate(input.username).error : true
+      if (!isValidUsername) {
+        return HandleError('UserInputError')
+      }
+
+      const isUserExist = await UserModel.findOne({ primary_email: input.primary_email })
+
+      return isUserExist
+    },
+
     register: async (parent, { input }, ctx) => {
       const user = new UserModel(input)
 
@@ -38,12 +56,12 @@ const AuthenticationResolver = {
           return HandleError('UserInputError', error)
         }
 
-        const emailValidation = await validateEmailForDuplication(input.primary_email)
+        const emailValidation = await isDuplicateEmail(input.primary_email)
         if (!emailValidation.isValid) {
           return emailValidation.error
         }
 
-        const usernameValidation = await validateUsernameForDuplication(input.username)
+        const usernameValidation = await isDuplicateUsername(input.username)
         if (!usernameValidation.isValid) {
           return usernameValidation.error
         }
@@ -92,7 +110,7 @@ const AuthenticationResolver = {
   }
 }
 
-async function validateEmailForDuplication (email) {
+async function isDuplicateEmail (email) {
   const isDuplicateEmailExists = await UserModel
     .findOne({ primary_email: email })
     .then((res) => {
@@ -111,7 +129,7 @@ async function validateEmailForDuplication (email) {
   return { isValid: true, error: {} }
 }
 
-async function validateUsernameForDuplication (username) {
+async function isDuplicateUsername (username) {
   const isDuplicateUsernameExists = await UserModel
     .findOne({ username: username })
     .then((res) => {

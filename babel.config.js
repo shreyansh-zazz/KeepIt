@@ -1,14 +1,10 @@
-const app = {
-  environment: process.env.NODE_ENV
-}
-
 const plugins = () => {
   const plugins = [
     'import-graphql',
     '@babel/transform-runtime'
   ]
 
-  if (app.environment === 'test') {
+  if (process.env.NODE_ENV === 'test') {
     plugins.push(['babel-plugin-rewire'])
   }
 

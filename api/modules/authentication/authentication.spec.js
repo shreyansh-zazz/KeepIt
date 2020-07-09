@@ -3,8 +3,8 @@ import HandleError from '../../helpers/error-handler/error-handler'
 import AuthenticationResolver from './authentication.resolver'
 import UserModel from '../../models/user.model'
 
-const validateEmailForDuplication = AuthenticationResolver.__GetDependency__('validateEmailForDuplication')
-const validateUsernameForDuplication = AuthenticationResolver.__GetDependency__('validateUsernameForDuplication')
+const isDuplicateEmail = AuthenticationResolver.__GetDependency__('isDuplicateEmail')
+const isDuplicateUsername = AuthenticationResolver.__GetDependency__('isDuplicateUsername')
 
 const jestUserData = {
   first_name: 'Jest',
@@ -20,7 +20,7 @@ describe('authentication module', () => {
 
   describe('validation methods tests', () => {
     it('should validate email to true', async () => {
-      const isValid = await validateEmailForDuplication('jest@keepit.com')
+      const isValid = await isDuplicateEmail('jest@keepit.com')
       expect(isValid.isValid).toBeTruthy()
     })
 
@@ -33,12 +33,12 @@ describe('authentication module', () => {
         throw new Error('Couldn\'t save user in database.')
       }
 
-      const isValid = await validateEmailForDuplication('jest@keepit.com')
+      const isValid = await isDuplicateEmail('jest@keepit.com')
       expect(isValid.isValid).toBeFalsy()
     })
 
     it('should validate username to true', async () => {
-      const isValid = await validateUsernameForDuplication('jest_tester')
+      const isValid = await isDuplicateUsername('jest_tester')
       expect(isValid.isValid).toBeTruthy()
     })
 
@@ -51,29 +51,29 @@ describe('authentication module', () => {
         throw new Error('Couldn\'t save user in database.')
       }
 
-      const isValid = await validateUsernameForDuplication('jest_tester')
+      const isValid = await isDuplicateUsername('jest_tester')
       expect(isValid.isValid).toBeFalsy()
     })
   })
 
-  describe('authentication query resolver tests', () => {
+  describe('authentication validation queries resolver tests', () => {
     it('should validate validateEmail query', async () => {
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: true }))
       const res = await AuthenticationResolver.Query.validateEmail(null, { primaryEmail: 'jest@keepit.com' }, null)
       expect(res.isValid).toBeTruthy()
     })
 
     it('should validate validateUsername query', async () => {
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: true }))
       const res = await AuthenticationResolver.Query.validateUsername(null, { username: 'jest_tester' }, null)
       expect(res.isValid).toBeTruthy()
     })
   })
 
-  describe('authentication mutation resolver test', () => {
+  describe('authentication register mutation resolver test', () => {
     it('should register a new user successfully', async () => {
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: true }))
 
       const ctx = { h: { state: jest.fn() } }
       const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, ctx)
@@ -82,8 +82,8 @@ describe('authentication module', () => {
     })
 
     it('should throw unxpected error and delete user if saved', async () => {
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: true }))
 
       const res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
       const user = await UserModel.find({ primary_email: jestUserData.primary_email })
@@ -92,8 +92,8 @@ describe('authentication module', () => {
     })
 
     it('should throw error when confirm_password doesn\'t match', async () => {
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: true }))
       const input = jestUserData
       input.confirm_password = 'random'
       const res = await AuthenticationResolver.Mutation.register(null, { input: input }, null)
@@ -101,8 +101,8 @@ describe('authentication module', () => {
     })
 
     it('should throw error when wrong input provided', async () => {
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: true }))
       const input = { ...jestUserData }
       input.primary_email = 'notAValidEmail'
       const res = await AuthenticationResolver.Mutation.register(null, { input: input }, null)
@@ -110,14 +110,14 @@ describe('authentication module', () => {
     })
 
     it('should throw error when duplicate user exists', async () => {
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: false, error: HandleError('DuplicateUserError', { key: 'Email Address' }) }))
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: false, error: HandleError('DuplicateUserError', { key: 'Email Address' }) }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: true }))
 
       let res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
       expect(res.extensions.code).toMatch(/DuplicateUserError/)
 
-      AuthenticationResolver.__set__('validateEmailForDuplication', () => Promise.resolve({ isValid: true }))
-      AuthenticationResolver.__set__('validateUsernameForDuplication', () => Promise.resolve({ isValid: false, error: HandleError('DuplicateUserError', { key: 'Username' }) }))
+      AuthenticationResolver.__set__('isDuplicateEmail', () => Promise.resolve({ isValid: true }))
+      AuthenticationResolver.__set__('isDuplicateUsername', () => Promise.resolve({ isValid: false, error: HandleError('DuplicateUserError', { key: 'Username' }) }))
 
       res = await AuthenticationResolver.Mutation.register(null, { input: jestUserData }, null)
       expect(res.extensions.code).toMatch(/DuplicateUserError/)
