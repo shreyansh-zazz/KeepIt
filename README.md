@@ -1,5 +1,5 @@
 # KeepIt
-Self-hosted note-talking webapp
+Self-hosted multi-purpose note-taking webapp
 
 ![nodejs_build_test badge](https://github.com/shreyansh-zazz/KeepIt/workflows/nodejs_build_test/badge.svg) ![codecov](https://codecov.io/gh/shreyansh-zazz/KeepIt/branch/master/graph/badge.svg)
 
